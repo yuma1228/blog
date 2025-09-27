@@ -73,7 +73,8 @@ post.title }} | 日々の日記{% endblock %} {% block content %}
             >
             {{ form.content }} {% if form.content.errors %}
             <div class="invalid-feedback d-block">
-              {{ form.content.errors.as_text }}
+            {{ form.content.errors.as_text }}
+
             </div>
             {% endif %}
           </div>

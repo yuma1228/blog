@@ -3,6 +3,25 @@
 {% block title %}ログイン{% endblock %}
 
 {% block content %}
+{% if messages %}
+<div class="messages-container">
+    {% for message in messages %}
+        {% if 'error' in message.tags %}
+            <div class="alert alert-danger" role="alert">
+                <strong>エラー:</strong> {{ message }}
+            </div>
+        {% elif 'success' in message.tags %}
+            <div class="alert alert-success" role="alert">
+                {{ message }}
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                {{ message }}
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
 <div class="container" style="max-width: 500px;">
     <h1 class="mb-4 text-center">ログイン</h1>
     <div class="card p-4 shadow-sm">

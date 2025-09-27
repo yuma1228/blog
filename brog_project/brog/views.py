@@ -10,7 +10,7 @@ from .forms import SignUpForm, LoginForm, CreatePostForm,CommentForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.urls import reverse_lazy,reverse
-
+from django.core.exceptions import ValidationError
 
 # ログイン前のトップページ
 # ここでは、いまのところ全ての投稿を表示する
@@ -60,7 +60,6 @@ class LoginView(BaseLoginView):
 class PostDetailView(DetailView):
     model = Post
     template_name = 'brog/post_detail.html'
-    form = CommentForm
     context_object_name = 'post'
     
     def get_context_data(self, **kwargs):   
@@ -68,19 +67,7 @@ class PostDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['form'] = CommentForm()
         return context
-    
-    def post(self, request, *args, **kwargs):
-        """フォームが送信された（POSTリクエスト）際の処理を記述するメソッド"""
-        self.object = self.get_object()
-        form = CommentForm(request.POST, post=self.object, user=request.user)
-        
-        if form.is_valid():
-            form.save()
-            return redirect(self.object.get_absolute_url()) 
-        else:
-            context = self.get_context_data(object=self.object)
-            context['form'] = form 
-            return self.render_to_response(context)
+
 
     
 class MyPageView(LoginRequiredMixin, ListView):
@@ -127,13 +114,18 @@ class CommentCreateView(CreateView):
     template_name = 'brog/post_detail.html'
 
     def form_valid(self, form):
-        post = get_object_or_404(Post, pk=self.kwargs['pk'])
-        form.instance.post = post
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-
+        if not self.request.user.is_authenticated:
+            messages.error(self.request, "コメントするにはログインしてください。")
+            return redirect('brog:login')
+        else:
+            post = get_object_or_404(Post, pk=self.kwargs['pk'])
+            form.instance.post = post
+            form.instance.author = self.request.user
+            return super().form_valid(form)
+    
     def get_success_url(self):
-        return reverse('brog:post_detail', kwargs={'pk': self.kwargs['pk']})
+        return reverse_lazy('brog:post_detail', kwargs={'pk': self.kwargs['pk']})
+
 
 
 
