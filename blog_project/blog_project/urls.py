@@ -21,8 +21,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('blog.urls')),
-    
 ]
+
+handler404 = 'blog.views.custom_404'
 
 
 

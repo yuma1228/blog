@@ -178,3 +178,7 @@ def update_profile_image(request):
             messages.error(request, "画像のアップロードに失敗しました。")
 
     return redirect("Blog:mypage")
+
+
+def custom_404(request, exception):
+    return redirect("Blog:index")
