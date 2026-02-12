@@ -15,14 +15,14 @@ class ViewTest(TestCase):
 
     def test_mypage_authentication(self):
         """MyPageViewはログインしていないとリダイレクトされるか"""
-        response = self.client.get(reverse('brog:mypage'))
+        response = self.client.get(reverse('Blog:mypage'))
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, '/login/?next=/mypage/') 
 
     def test_mypage_displays_only_user_posts(self):
         """MyPageViewには自分の投稿だけが表示されるか"""
         self.client.login(username='user1', password='password')
-        response = self.client.get(reverse('brog:mypage'))
+        response = self.client.get(reverse('Blog:mypage'))
         
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'User1の投稿')  
@@ -31,11 +31,11 @@ class ViewTest(TestCase):
         """投稿が正しく作成されるか"""
         self.client.login(username='user1', password='password')
         
-        response = self.client.post(reverse('brog:post_create'), {
+        response = self.client.post(reverse('Blog:post_create'), {
             'title': '新しい投稿',
             'content': '新しい内容です。'
         })
-        self.assertRedirects(response, reverse('brog:mypage'))
+        self.assertRedirects(response, reverse('Blog:mypage'))
         self.assertTrue(Post.objects.filter(title='新しい投稿').exists())
         new_post = Post.objects.get(title='新しい投稿')
         self.assertEqual(new_post.author, self.user1)
@@ -46,8 +46,8 @@ class ViewTest(TestCase):
         """投稿者本人が、自分の投稿を削除できるか"""
         self.client.login(username='user1', password='password')
         post_count = Post.objects.count()
-        response = self.client.post(reverse('brog:post_delete', kwargs={'pk': self.post1.pk}))
-        self.assertRedirects(response, reverse('brog:mypage'))
+        response = self.client.post(reverse('Blog:post_delete', kwargs={'pk': self.post1.pk}))
+        self.assertRedirects(response, reverse('Blog:mypage'))
         self.assertEqual(Post.objects.count(), post_count - 1)
         self.assertFalse(Post.objects.filter(pk=self.post1.pk).exists())
 
@@ -55,28 +55,28 @@ class ViewTest(TestCase):
         """他人の投稿は削除できないか"""
         self.client.login(username='user2', password='password')
         post_count = Post.objects.count()
-        response = self.client.post(reverse('brog:post_delete', kwargs={'pk': self.post1.pk}))
+        response = self.client.post(reverse('Blog:post_delete', kwargs={'pk': self.post1.pk}))
         self.assertEqual(response.status_code, 403)
         self.assertEqual(Post.objects.count(), post_count)
 
     def test_post_detail_view_content(self):
         """詳細ページに正しいタイトルと内容が表示されるか"""
-        response = self.client.get(reverse('brog:post_detail', kwargs={'pk': self.post1.pk}))
+        response = self.client.get(reverse('Blog:post_detail', kwargs={'pk': self.post1.pk}))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.post1.title)
         self.assertContains(response, self.post1.content)
 
     def test_login_view_success(self):
         """正しい情報でログインできるか"""
-        response = self.client.post(reverse('brog:login'), {
+        response = self.client.post(reverse('Blog:login'), {
             'username': 'user1',
             'password': 'password',
         })
-        self.assertRedirects(response, reverse('brog:home'))
+        self.assertRedirects(response, reverse('Blog:home'))
 
     def test_login_view_failure(self):
         """間違った情報でログインに失敗するか"""
-        response = self.client.post(reverse('brog:login'), {
+        response = self.client.post(reverse('Blog:login'), {
             'username': 'user1',
             'password': 'wrongpassword',
         })
@@ -112,4 +112,5 @@ class CreatePostFormTest(TestCase):
         form = CreatePostForm(data=form_data)
         self.assertFalse(form.is_valid())
         
+
 

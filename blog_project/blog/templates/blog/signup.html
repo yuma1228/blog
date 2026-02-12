@@ -1,46 +1,97 @@
-{% extends "brog/base.html" %}
+{% extends "blog/base.html" %} {% load static %} {% block title %}新規登録 |
+日々の日記{% endblock %} {% block content %}
 
-{% block content %}
-<div class="container my-5">
+<!-- 認証ヒーローセクション -->
+<section class="auth-hero">
+  <div class="container auth-hero-content">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 text-center">
+        <h1 class="display-5 fw-bold mb-3">
+          <i class="bi bi-rocket-takeoff"></i> 今すぐ始めよう
+        </h1>
+        <p class="lead">あなたの物語を綴る準備はできましたか？</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container py-5">
   <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h2 class="mb-0">新規登録</h2>
+    <div class="col-lg-6 col-md-8">
+      <!-- 新規登録カード -->
+      <div class="card auth-card fade-in">
+        <div class="auth-card-header text-center">
+          <h2 class="mb-0">
+            <i class="bi bi-person-plus"></i> 新規登録
+          </h2>
         </div>
-        <div class="card-body">
-          <p class="card-text text-muted mb-4">新しいアカウントを作成します。</p>
+        <div class="card-body p-4">
+          <p class="text-muted mb-4 text-center">
+            <i class="bi bi-info-circle"></i>
+            新しいアカウントを作成して、日記を書き始めましょう
+          </p>
           <form method="post" novalidate>
-            {% csrf_token %}
-
-            {% for field in form %}
+            {% csrf_token %} {% for field in form %}
             <div class="mb-3">
-              <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-              {{ field }}
-              {% if field.help_text %}
-                <small class="form-text text-muted">{{ field.help_text }}</small>
-              {% endif %}
-              {% for error in field.errors %}
-                <div class="invalid-feedback d-block">
-                  {{ error }}
-                </div>
+              <label for="{{ field.id_for_label }}" class="form-label">
+                {% if field.name == 'username' %}
+                <i class="bi bi-person"></i>
+                {% elif field.name == 'password1' or field.name == 'password2' %}
+                <i class="bi bi-lock"></i>
+                {% endif %} {{ field.label }}
+              </label>
+              {{ field }} {% if field.help_text %}
+              <small class="form-text text-muted d-block mt-1">
+                <i class="bi bi-lightbulb"></i> {{ field.help_text }}
+              </small>
+              {% endif %} {% for error in field.errors %}
+              <div class="invalid-feedback d-block">
+                <i class="bi bi-exclamation-circle"></i> {{ error }}
+              </div>
               {% endfor %}
             </div>
             {% endfor %}
 
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary mt-3">登録する</button>
+            <div class="d-grid gap-2 mt-4">
+              <button type="submit" class="btn btn-gradient btn-lg">
+                <i class="bi bi-person-plus"></i> アカウントを作成
+              </button>
+              <a
+                href="{% url 'Blog:index' %}"
+                class="btn btn-outline-secondary"
+              >
+                <i class="bi bi-arrow-left"></i> トップページへ戻る
+              </a>
             </div>
           </form>
         </div>
-        <div class="card-footer text-center">
-          <small>アカウントをお持ちですか？ <a href="{% url 'brog:login' %}">ログイン</a></small>
+        <div class="card-footer text-center py-3">
+          <small class="text-muted">
+            すでにアカウントをお持ちですか？
+            <a href="{% url 'Blog:login' %}" class="text-decoration-none">
+              ログイン
+            </a>
+          </small>
+        </div>
+      </div>
+
+      <!-- 特徴の簡単な説明 -->
+      <div class="row mt-4 text-center">
+        <div class="col-md-4 mb-3">
+          <i class="bi bi-pencil-square fs-2 text-primary"></i>
+          <p class="small text-muted mt-2">簡単に記録</p>
+        </div>
+        <div class="col-md-4 mb-3">
+          <i class="bi bi-shield-check fs-2 text-success"></i>
+          <p class="small text-muted mt-2">安全・安心</p>
+        </div>
+        <div class="col-md-4 mb-3">
+          <i class="bi bi-people fs-2 text-info"></i>
+          <p class="small text-muted mt-2">コミュニティ</p>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-
 
 {% endblock %}

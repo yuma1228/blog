@@ -1,87 +1,163 @@
-{% extends 'brog/base.html' %} {% load static %} {#
-ブラウザのタブに表示されるタイトルを記事のタイトルに設定 #} {% block title %}{{
-post.title }} | 日々の日記{% endblock %} {% block content %}
-<div class="row justify-content-center">
-  <div class="col-lg-9">
-    {# 投稿内容をカードで表示 #}
-    <div class="card shadow-sm mb-4">
-      <div class="card-body p-4">
-        <h1
-          class="card-title border-bottom pb-3 mb-3 d-flex justify-content-between align-items-center"
-        >
-          <span>{{ post.title }}</span>
+{% extends 'blog/base.html' %} {% load static %} {% block title %}{{post.title}}
+| 日々の日記{% endblock %} {% block content %}
 
+<div class="row justify-content-center fade-in">
+  <div class="col-lg-9">
+    <!-- 投稿内容カード -->
+    <div class="card post-detail-card mb-4">
+      <div class="card-header bg-white border-bottom py-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <h1 class="h3 mb-0">
+            <i class="bi bi-file-text text-primary"></i> {{ post.title }}
+          </h1>
           {% if post.author == user %}
-          <form method="POST" action="{% url 'brog:post_delete' post.pk %}">
+          <form method="POST" action="{% url 'Blog:post_delete' post.pk %}">
             {% csrf_token %}
             <button
               type="submit"
               class="btn btn-outline-danger btn-sm"
               onclick="return confirm('本当に削除しますか？');"
             >
-              削除
+              <i class="bi bi-trash"></i> 削除
             </button>
           </form>
           {% endif %}
-        </h1>
-
-        <div class="text-end text-muted small mb-3">
-          <span>投稿者: {{ post.author.username }}</span> |
-          <span>投稿日: {{ post.created_at|date:"Y年n月j日" }}</span>
         </div>
-        <div class="card-text fs-5">{{ post.content|linebreaksbr }}</div>
+      </div>
+      <div class="card-body p-4">
+        <div
+          class="d-flex justify-content-between align-items-center text-muted small mb-4 pb-3 border-bottom"
+        >
+          <div>
+            <i class="bi bi-person-circle"></i>
+            <span class="fw-bold">{{ post.author.username }}</span>
+          </div>
+          <div>
+            <i class="bi bi-calendar"></i>
+            <span>{{ post.created_at|date:"Y年n月j日 H:i" }}</span>
+          </div>
+        </div>
+        <div class="post-content fs-5 lh-lg">
+          {{ post.content|linebreaksbr }}
+        </div>
+      </div>
+      <div class="card-footer bg-light">
+        <div class="d-flex justify-content-between align-items-center">
+          <small class="text-muted">
+            <i class="bi bi-chat-dots"></i> {{ post.comments.count }} コメント
+          </small>
+          <a
+            href="{% url 'Blog:home' %}"
+            class="btn btn-sm btn-outline-secondary"
+          >
+            <i class="bi bi-arrow-left"></i> 一覧に戻る
+          </a>
+        </div>
       </div>
     </div>
 
-    {# コメントセクションをカードで表示 #}
-    <div class="card shadow-sm">
+    <!-- コメントセクション -->
+    <div class="card post-detail-card">
+      <div class="card-header bg-white border-bottom py-3">
+        <h2 class="h5 mb-0">
+          <i class="bi bi-chat-dots text-primary"></i> コメント
+        </h2>
+      </div>
       <div class="card-body p-4">
-        <h2 class="card-title h4 border-bottom pb-2 mb-3">コメント</h2>
+        <!-- 既存のコメント -->
+        {% if post.comments.all %}
+        <div class="mb-4">
+          {% for comment in post.comments.all %}
+          <div class="comment-card">
+            <div class="d-flex">
+              <div class="flex-shrink-0 me-3">
+                <div class="comment-avatar">
+                  {{ comment.author.username|slice:":1"|upper }}
+                </div>
+              </div>
+              <div class="flex-grow-1">
+                <div
+                  class="d-flex justify-content-between align-items-center mb-2"
+                >
+                  <h6 class="mb-0 fw-bold">
+                    <i class="bi bi-person"></i> {{ comment.author.username }}
+                  </h6>
 
-        {% for comment in post.comments.all %}
-        <div class="d-flex mb-3">
-          <div class="flex-shrink-0">
-            {# 将来的にアバター画像などを表示できるスペース #}
-            <svg
-              class="bd-placeholder-img rounded-circle"
-              width="50"
-              height="50"
-              xmlns="http://www.w3.org/2000/svg"
-              role="img"
-              aria-label="Placeholder: 50x50"
-              preserveAspectRatio="xMidYMid slice"
-              focusable="false"
-            >
-              <title>Placeholder</title>
-              <rect width="100%" height="100%" fill="#868e96"></rect>
-            </svg>
-          </div>
-          <div class="ms-3">
-            <h5 class="mt-0 mb-1 fw-bold">{{ comment.author.username }}</h5>
-            {{ comment.content|linebreaksbr }}
-          </div>
-        </div>
-        {% empty %}
-        <p class="text-muted">コメントはまだありません。</p>
-        {% endfor %}
-        <h3>コメントを投稿する</h3>
-        <form method="post" action="{% url 'brog:comment_create' post.pk %}">
-          {% csrf_token %}
-          <div class="mb-3">
-            <label for="{{ form.content.id_for_label }}" class="form-label"
-              >コメント</label
-            >
-            {{ form.content }} {% if form.content.errors %}
-            <div class="invalid-feedback d-block">
-            {{ form.content.errors.as_text }}
+                  <div class="d-flex align-items-center gap-2">
+                    <small class="text-muted">
+                      <i class="bi bi-clock"></i>
+                      {{ comment.created_at|date:"Y/m/d H:i" }}
+                    </small>
 
+                    {% if comment.author == user %}
+                    <form
+                      method="POST"
+                      action="{% url 'Blog:comment_delete' comment.pk %}"
+                      class="d-inline"
+                    >
+                      {% csrf_token %}
+                      <button
+                        type="submit"
+                        class="btn btn-sm btn-outline-danger py-0 px-2"
+                        onclick="return confirm('本当に削除しますか？');"
+                        style="font-size: 0.8rem"
+                      >
+                        削除
+                      </button>
+                    </form>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <p class="mb-0">{{ comment.content|linebreaksbr }}</p>
+              </div>
             </div>
-            {% endif %}
           </div>
-          <button type="submit" class="btn btn-primary">送信</button>
-        </form>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center text-muted py-4">
+          <i class="bi bi-inbox fs-1"></i>
+          <p class="mt-2">
+            コメントはまだありません。最初のコメントを投稿しましょう！
+          </p>
+        </div>
+        {% endif %}
+
+        <!-- コメント投稿フォーム -->
+        <div class="border-top pt-4">
+          <h3 class="h6 mb-3">
+            <i class="bi bi-pencil-square"></i> コメントを投稿する
+          </h3>
+          {% if user.is_authenticated %}
+          <form method="post" action="{% url 'Blog:comment_create' post.pk %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="{{ form.content.id_for_label }}" class="form-label">
+                コメント内容
+              </label>
+              {{ form.content }} {% if form.content.errors %}
+              <div class="invalid-feedback d-block">
+                {{ form.content.errors.as_text }}
+              </div>
+              {% endif %}
+            </div>
+            <button type="submit" class="btn btn-gradient">
+              <i class="bi bi-send"></i> 送信
+            </button>
+          </form>
+          {% else %}
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            コメントを投稿するには
+            <a href="{% url 'Blog:login' %}" class="alert-link">ログイン</a>
+            が必要です。
+          </div>
+          {% endif %}
+        </div>
       </div>
     </div>
   </div>
 </div>
+
 {% endblock %}

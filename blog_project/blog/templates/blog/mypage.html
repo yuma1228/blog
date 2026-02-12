@@ -1,67 +1,275 @@
-<!-- マイページ -->
-{% extends 'brog/base.html' %} {% block content %}
+{% extends 'blog/base.html' %} {% load static %} {% block title %}マイページ |
+日々の日記{% endblock %} {% block content %}
 
-<h1>{{ user.username }}さんのマイページ</h1>
+<div class="container mt-4">
+  <!-- ヘッダー部分 -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="display-4">
+        <i class="bi bi-person-circle"></i> {{ user.username }}さんのマイページ
+      </h1>
+    </div>
+  </div>
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h2>投稿一覧</h2>
-  <a href="{% url 'brog:post_create' %}" class="btn btn-primary">新規投稿</a>
+  <!-- プロフィールカード -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card shadow-sm">
+        <div class="card-body text-center">
+          {% if profile.profile_image %}
+          <img
+            src="{{ profile.profile_image.url }}"
+            alt="プロフィール画像"
+            class="profile-avatar-large mb-3"
+          />
+          {% else %}
+          <div
+            class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center mb-3"
+            style="width: 150px; height: 150px"
+          >
+            <i class="bi bi-person-fill text-white" style="font-size: 4rem"></i>
+          </div>
+          {% endif %}
+          <h4>{{ user.username }}</h4>
+          <p class="text-muted">{{ user.email }}</p>
+
+          <!-- 統計情報 -->
+          <div class="row mt-3">
+            <div class="col-6">
+              <h5 class="text-primary">{{ post_count }}</h5>
+              <small class="text-muted">投稿</small>
+            </div>
+            <div class="col-6">
+              <h5 class="text-success">{{ comment_count }}</h5>
+              <small class="text-muted">コメント</small>
+            </div>
+          </div>
+
+          <!-- 画像更新フォーム -->
+          <button
+            class="btn btn-outline-primary btn-sm mt-3"
+            data-bs-toggle="collapse"
+            data-bs-target="#profileImageForm"
+          >
+            <i class="bi bi-camera"></i> 画像を変更
+          </button>
+          <div class="collapse mt-3" id="profileImageForm">
+            <form
+              method="post"
+              action="{% url 'Blog:update_profile_image' %}"
+              enctype="multipart/form-data"
+            >
+              {% csrf_token %} {{ profile_form.as_p }}
+              <button type="submit" class="btn btn-primary btn-sm">更新</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- タブコンテンツ -->
+    <div class="col-md-8">
+      <!-- タブナビゲーション -->
+      <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="posts-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#posts"
+            type="button"
+          >
+            <i class="bi bi-file-text"></i> 投稿一覧 ({{ post_count }})
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="comments-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#comments"
+            type="button"
+          >
+            <i class="bi bi-chat-dots"></i> コメント一覧 ({{ comment_count }})
+          </button>
+        </li>
+      </ul>
+
+      <!-- タブコンテンツ -->
+      <div class="tab-content" id="myTabContent">
+        <!-- 投稿タブ -->
+        <div class="tab-pane fade show active" id="posts">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5>あなたの投稿</h5>
+            <a
+              href="{% url 'Blog:post_create' %}"
+              class="btn btn-primary btn-sm"
+            >
+              <i class="bi bi-plus-circle"></i> 新規投稿
+            </a>
+          </div>
+
+          {% if posts %}
+          <div class="row">
+            {% for post in posts %}
+            <div class="col-12 mb-3">
+              <div class="card shadow-sm hover-shadow">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                      <h5 class="card-title">
+                        <a
+                          href="{% url 'Blog:post_detail' post.id %}"
+                          class="text-decoration-none"
+                        >
+                          {{ post.title }}
+                        </a>
+                      </h5>
+                      <p class="card-text text-muted">
+                        {{ post.content|truncatewords:30 }}
+                      </p>
+                      <small class="text-muted">
+                        <i class="bi bi-calendar"></i>
+                        {{post.created_at|date:"Y年m月d日 H:i" }}
+                        <span class="ms-2">
+                          <i class="bi bi-chat"></i> {{ post.comments.count }}
+                          コメント
+                        </span>
+                      </small>
+                    </div>
+                    <div class="ms-3">
+                      <a
+                        href="{% url 'Blog:post_detail' post.id %}"
+                        class="btn btn-sm btn-outline-primary"
+                        >詳細</a
+                      >
+                      <form
+                        method="POST"
+                        action="{% url 'Blog:post_delete' post.id %}"
+                        class="d-inline"
+                      >
+                        {% csrf_token %}
+                        <button
+                          type="submit"
+                          class="btn btn-sm btn-outline-danger"
+                          onclick="return confirm('本当に削除しますか？');"
+                        >
+                          削除
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <!-- ページネーション -->
+          {% if page_obj.paginator.num_pages > 1 %}
+          <nav>
+            <ul class="pagination justify-content-center">
+              {% if page_obj.has_previous %}
+              <li class="page-item">
+                <a class="page-link" href="?page=1">&laquo; 最初</a>
+              </li>
+              <li class="page-item">
+                <a
+                  class="page-link"
+                  href="?page={{ page_obj.previous_page_number }}"
+                  >前へ</a
+                >
+              </li>
+              {% else %}
+              <li class="page-item disabled">
+                <span class="page-link">&laquo; 最初</span>
+              </li>
+              <li class="page-item disabled">
+                <span class="page-link">前へ</span>
+              </li>
+              {% endif %}
+
+              <li class="page-item disabled">
+                <span class="page-link"
+                  >{{ page_obj.number }} / {{ page_obj.paginator.num_pages
+                  }}</span
+                >
+              </li>
+
+              {% if page_obj.has_next %}
+              <li class="page-item">
+                <a
+                  class="page-link"
+                  href="?page={{ page_obj.next_page_number }}"
+                  >次へ</a
+                >
+              </li>
+              <li class="page-item">
+                <a
+                  class="page-link"
+                  href="?page={{ page_obj.paginator.num_pages }}"
+                  >最後 &raquo;</a
+                >
+              </li>
+              {% else %}
+              <li class="page-item disabled">
+                <span class="page-link">次へ</span>
+              </li>
+              <li class="page-item disabled">
+                <span class="page-link">最後 &raquo;</span>
+              </li>
+              {% endif %}
+            </ul>
+          </nav>
+          {% endif %} {% else %}
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> まだ投稿がありません。
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- コメントタブ -->
+        <div class="tab-pane fade" id="comments">
+          <h5 class="mb-3">あなたのコメント</h5>
+          {% if user_comments %}
+          <div class="list-group">
+            {% for comment in user_comments %}
+            <div class="list-group-item">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">
+                  <a
+                    href="{% url 'Blog:post_detail' comment.post.id %}"
+                    class="text-decoration-none"
+                  >
+                    {{ comment.post.title }}
+                  </a>
+                  へのコメント
+                </h6>
+                <small class="text-muted"
+                  >{{ comment.created_at|date:"Y年m月d日 H:i" }}</small
+                >
+              </div>
+              <p class="mb-1">{{ comment.content|truncatewords:20 }}</p>
+              <small class="text-muted">
+                <a
+                  href="{% url 'Blog:post_detail' comment.post.id %}"
+                  class="text-decoration-none"
+                >
+                  投稿を見る <i class="bi bi-arrow-right"></i>
+                </a>
+              </small>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> まだコメントがありません。
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-{% if posts %}
-<ul>
-  <div class="list-group">
-    {% for post in posts %}
-
-    <a
-      href="{% url 'brog:post_detail' post.id %}"
-      class="list-group-item list-group-item-action"
-    >
-      <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">{{ post.title }}</h5>
-        <small>{{ post.created_at|date:"Y年m月d日 H:i"}}</small>
-      </div>
-      <p class="mb-1">{{ post.content|truncatewords:20 }}</p>
-    </a>
-    {% endfor %}
-  </div>
-  <nav aria-label="Page navigation example">
-    <ul class="pagination justify-content-center">
-      {% if page_obj.has_previous %}
-
-      <a class="page-link" href="?page=1">&laquo; first</a>
-      <a class="page-link" href="?page={{ page_obj.previous_page_number }}"
-        >previous</a
-      >
-      {% else %}
-      <li class="page-item disabled">
-        <a class="page-link">&laquo; first</a>
-      </li>
-      <li class="page-item disabled">
-        <a class="page-link">previous</a>
-      </li>
-      {% endif %}
-      <li class="page-item">
-        <a class="page-link" href="#"> {{ page_obj.number }}/{{ page_obj.paginator.num_pages }} </a>
-      </li>
-
-      {% if page_obj.has_next %}
-
-      <a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a>
-      <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}"
-        >last &raquo;</a
-      >
-      {% else %}
-      <li class="page-item disabled">
-        <a class="page-link">next</a>
-      </li>
-      <li class="page-item disabled">
-        <a class="page-link">last &raquo;</a>
-      </li>
-      {% endif %}
-    </ul>
-  </nav>
-</ul>
-{% else %}
-<p>まだ投稿がありません。</p>
-{% endif %} {% endblock%}
+{% endblock %}

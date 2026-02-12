@@ -1,25 +1,286 @@
+/* ======================
+   共通スタイル
+   ====================== */
 body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
 }
 
 main {
-    flex: 1;
+  flex: 1;
 }
 
-footer {
-    background-color: #f8f9fa;
-    padding: 1rem;
-    text-align: center;
+/* ======================
+   ナビゲーションバー
+   ====================== */
+.navbar {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
+.navbar-brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+}
 
-input, select, textarea {
+/* ======================
+   フッター
+   ====================== */
+.footer {
+  background: linear-gradient(135deg, #89b5e8 0%, #a0c4e8 100%);
+  color: #2c3e50;
+}
+
+/* ======================
+   ヒーローセクション
+   ====================== */
+.hero-section {
+  background: linear-gradient(135deg, #a8d5e2 0%, #b8dfe6 100%);
+  color: #2c3e50;
+  padding: 50px 0 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,165.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+  background-size: cover;
+  opacity: 0.3;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ウェルカムセクション（home.html用） */
+.welcome-section {
+  background: linear-gradient(135deg, #a8d5e2 0%, #b8dfe6 100%);
+  color: #2c3e50;
+  padding: 40px 0 30px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,165.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+  background-size: cover;
+  opacity: 0.3;
+}
+
+.welcome-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* 認証ヒーローセクション（login/signup用） */
+.auth-hero {
+  background: linear-gradient(135deg, #a8d5e2 0%, #b8dfe6 100%);
+  color: #2c3e50;
+  padding: 80px 0 40px;
+  margin-bottom: -40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,165.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+  background-size: cover;
+  opacity: 0.3;
+}
+
+.auth-hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ======================
+   カードスタイル
+   ====================== */
+
+/* 特徴カード */
+.feature-card {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  border: none;
+  height: 100%;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 20px;
+}
+
+/* 投稿カード */
+.post-card {
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  border: none;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  height: 100%;
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.post-card .card-header {
+  background: linear-gradient(135deg, #89b5e8 0%, #a0c4e8 100%);
+  color: #2c3e50;
+  border: none;
+}
+
+/* CTAカード */
+.cta-card {
+  background: linear-gradient(135deg, #ffd6d6 0%, #ffe5e5 100%);
+  color: #2c3e50;
+  border: none;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.cta-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(255, 214, 214, 0.4);
+}
+
+/* 統計カード */
+.stats-card {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 認証カード */
+.auth-card {
+  border: none;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.auth-card-header {
+  background: linear-gradient(135deg, #89b5e8 0%, #a0c4e8 100%);
+  color: #2c3e50;
+  padding: 2rem;
+}
+
+/* ポストカード（詳細ページ用） */
+.post-detail-card {
+  border: none;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.post-detail-card:hover {
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* コメントカード */
+.comment-card {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+
+.comment-card:hover {
+  background: #e9ecef;
+  transform: translateX(5px);
+}
+
+/* マイページカード */
+.hover-shadow {
+  transition: box-shadow 0.3s ease;
+}
+
+.hover-shadow:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ======================
+   ボタンスタイル
+   ====================== */
+
+/* ヒーローボタン */
+.btn-hero {
+  padding: 12px 40px;
+  font-size: 1.1rem;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+.btn-hero:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* グラデーションボタン */
+.btn-gradient {
+  background: linear-gradient(135deg, #89b5e8 0%, #a0c4e8 100%);
+  border: none;
+  color: #2c3e50;
+  transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(137, 181, 232, 0.4);
+  color: #2c3e50;
+}
+
+/* ======================
+   フォームスタイル
+   ====================== */
+input,
+select,
+textarea {
   display: block;
   width: 100%;
-  padding: .375rem .75rem;
+  padding: 0.75rem 1rem;
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
@@ -27,15 +288,129 @@ input, select, textarea {
   background-color: #fff;
   background-clip: padding-box;
   border: 1px solid #ced4da;
-  border-radius: .25rem;
-  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  border-radius: 0.5rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-input:focus {
-  border-color: #86b7fe;
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #89b5e8;
   outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  box-shadow: 0 0 0 0.25rem rgba(137, 181, 232, 0.25);
 }
 
+/* フォームラベル */
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 0.5rem;
+}
 
+/* ======================
+   アニメーション
+   ====================== */
 
+/* フェードインアップ */
+.fade-in-up {
+  animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* フェードイン */
+.fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ======================
+   ユーティリティ
+   ====================== */
+
+/* テキストグラデーション */
+.text-gradient {
+  background: linear-gradient(135deg, #5a9fc7 0%, #7bb5d9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* プロフィール画像 */
+.profile-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #89b5e8;
+}
+
+.profile-avatar-large {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #89b5e8;
+}
+
+/* コメントアバター */
+.comment-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #89b5e8 0%, #a0c4e8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2c3e50;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* メッセージコンテナ */
+.messages-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1050;
+  max-width: 400px;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 40px 0 30px;
+  }
+
+  .welcome-section {
+    padding: 30px 0 20px;
+  }
+
+  .auth-hero {
+    padding: 50px 0 30px;
+  }
+
+  .btn-hero {
+    padding: 8px 20px;
+    font-size: 0.9rem;
+  }
+}

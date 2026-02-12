@@ -28,7 +28,8 @@ class Migration(migrations.Migration):
                 ('author', models.CharField(max_length=100)),
                 ('content', models.TextField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='brog.post')),
+                ('post', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comments', to='Blog.post')),
             ],
         ),
     ]
+

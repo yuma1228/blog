@@ -1,103 +1,217 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
   <head>
     {% load static %}
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Brog</title>
+    <title>ホーム - 日々の日記</title>
+
+    <link rel="icon" href="{% static 'blog/images/favicon/favicon.ico' %}" />
+
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="{% static 'brog/css/style.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="{% static 'blog/style.css' %}" />
   </head>
-  <body>
-    <header>
-      <nav class="navbar navbar-expand-lg bg-light border-bottom">
-        <div class="container-fluid">
-          <a class="navbar-brand" >日々の日記</a>
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link" >記事一覧</a>
-              </li>
-            </ul>
-            <div class="d-flex align-items-center">
-              {% if user.is_authenticated %}
-              <a class ="nav-link active btn-sm me-2" href="{% url 'brog:mypage' %}">
-                マイページ
+  <body class="d-flex flex-column min-vh-100 bg-light">
+    <!-- ナビゲーション -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'Blog:home' %}">
+          <i class="bi bi-journal-text text-primary"></i> 日々の日記
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            {% if user.is_authenticated %}
+            <li class="nav-item me-2">
+              <a
+                class="btn btn-outline-primary"
+                href="{% url 'Blog:post_create' %}"
+              >
+                <i class="bi bi-plus-circle"></i> 新規投稿
               </a>
-              <form action="{% url 'brog:logout' %}" method="post">
+            </li>
+            <li class="nav-item me-2">
+              <a
+                class="btn btn-outline-secondary"
+                href="{% url 'Blog:mypage' %}"
+              >
+                <i class="bi bi-person-circle"></i> マイページ
+              </a>
+            </li>
+            <li class="nav-item">
+              <form
+                action="{% url 'Blog:logout' %}"
+                method="post"
+                class="d-inline"
+              >
                 {% csrf_token %}
-                <button type="submit" class="btn btn-outline-secondary btn-sm">
-                  ログアウト
+                <button type="submit" class="btn btn-outline-danger">
+                  <i class="bi bi-box-arrow-right"></i> ログアウト
                 </button>
               </form>
-              {% else %}
-              <a href="{% url 'login' %}" class="btn btn-primary btn-sm me-2"
-                >ログイン</a
-              >
-              <a href="{% url 'brog:signup' %}" class="btn btn-secondary btn-sm"
-                >新規登録</a
-              >
-              {% endif %}
+            </li>
+            {% else %}
+            <li class="nav-item me-2">
+              <a class="btn btn-outline-primary" href="{% url 'Blog:login' %}">
+                <i class="bi bi-box-arrow-in-right"></i> ログイン
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-primary" href="{% url 'Blog:signup' %}">
+                <i class="bi bi-person-plus"></i> 新規登録
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ウェルカムセクション -->
+    <section class="welcome-section">
+      <div class="container welcome-content">
+        <div class="row align-items-center">
+          <div class="col-lg-8 mx-auto text-center">
+            {% if user.is_authenticated %}
+            <h2 class="fw-bold mb-2">
+              <i class="bi bi-emoji-smile"></i>
+              おかえりなさい、{{user.username}}さん！
+            </h2>
+            <p class="mb-0">
+              今日はどんな一日でしたか？あなたの思いを自由に綴りましょう
+            </p>
+            {% else %}
+            <h2 class="fw-bold mb-2">
+              <i class="bi bi-stars"></i> ようこそ、日々の日記へ
+            </h2>
+            <p class="mb-0">ログインして、あなたの日記を書き始めましょう</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- メインコンテンツ -->
+    <main class="container mb-5 fade-in">
+      <!-- CTAセクション（ログインユーザーのみ） -->
+      {% if user.is_authenticated %}
+      <div class="row mb-3">
+        <div class="col-lg-10 mx-auto">
+          <div class="card cta-card">
+            <div class="card-body text-center p-3">
+              <h5 class="card-title mb-2">
+                <i class="bi bi-pencil-square"></i> 新しい投稿を作成
+              </h5>
+              <p class="card-text mb-3 small">
+                今日の出来事や学んだことを記録しましょう
+              </p>
+              <a href="{% url 'Blog:post_create' %}" class="btn btn-light px-4">
+                <i class="bi bi-plus-circle"></i> 投稿を書く
+              </a>
             </div>
           </div>
         </div>
-      </nav>
-    </header>
+      </div>
+      {% endif %}
 
-    <div class="container mt-4">
-      <main>
-        <section>
-          <h2>最近の投稿</h2>
+      <!-- 投稿セクション -->
+      <section>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="fw-bold">
+            <i class="bi bi-newspaper text-primary"></i> みんなの投稿
+          </h2>
+          <small class="text-muted">最新の投稿をチェック</small>
+        </div>
 
-          {% if all_posts %}
-          <div class="row">
-            {% for post in all_posts %}
-            <div class="col-md-4 mb-4">
-              <div class="card h-100 shadow-sm">
-                <div
-                  class="card-header bg-light d-flex justify-content-between align-items-center"
-                >
-                  <h5 class="card-title mb-0">{{ post.title }}</h5>
-
-                  <small class="text-muted">
-                    by {{ post.author.username }} on {{ post.created_at|date:"Y年m月d日 H:i" }}
-                  </small>
-                </div>
-
-                <div class="card-body d-flex flex-column">
-                  <p class="card-text">{{ post.content|truncatewords:20 }}</p>
-                  <a
-                    href="{% url 'brog:post_detail' post.id %}"
-                    class="btn btn-primary mt-auto"
-                    >続きを読む</a
+        {% if all_posts %}
+        <div class="row g-4">
+          {% for post in all_posts %}
+          <div class="col-md-6 col-lg-4">
+            <div class="card post-card">
+              <div class="card-header">
+                <h5 class="card-title mb-0">
+                  <i class="bi bi-file-text"></i> {{ post.title }}
+                </h5>
+              </div>
+              <div class="card-body d-flex flex-column">
+                <p class="card-text text-muted mb-3">
+                  {{ post.content|truncatewords:25 }}
+                </p>
+                <div class="mt-auto">
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-3"
                   >
+                    <small class="text-muted">
+                      <i class="bi bi-person-circle"></i>
+                      {{post.author.username}}
+                    </small>
+                    <small class="text-muted">
+                      <i class="bi bi-calendar"></i>
+                      {{post.created_at|date:"m/d" }}
+                    </small>
+                  </div>
+                  <div class="d-flex gap-2">
+                    <a
+                      href="{% url 'Blog:post_detail' post.id %}"
+                      class="btn btn-gradient flex-grow-1"
+                    >
+                      <i class="bi bi-book-half"></i> 続きを読む
+                    </a>
+                    <button
+                      class="btn btn-outline-secondary"
+                      data-bs-toggle="tooltip"
+                      title="コメント数"
+                    >
+                      <i class="bi bi-chat-dots"></i> {{ post.comments.count }}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
-            {% endfor %}
           </div>
-          {% else %}
-          <p>まだ投稿がありません。</p>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+          <i class="bi bi-inbox fs-1 text-muted"></i>
+          <p class="text-muted mt-3">まだ投稿がありません</p>
+          {% if user.is_authenticated %}
+          <a href="{% url 'Blog:post_create' %}" class="btn btn-gradient mt-3">
+            <i class="bi bi-plus-circle"></i> 最初の投稿を作成
+          </a>
           {% endif %}
-        </section>
-      </main>
-    </div>
+        </div>
+        {% endif %}
+      </section>
+    </main>
 
-    <footer class="text-center py-4 mt-4 bg-light">
-      <p class="mb-0">&copy; YUMA NAGANO All rights reserved.</p>
+    <!-- フッター -->
+    <footer class="footer text-center py-4 mt-auto">
+      <div class="container">
+        <p class="mb-2">
+          <i class="bi bi-heart-fill text-danger"></i>
+          日々の日記で、あなたの物語を紡ごう
+        </p>
+        <p class="mb-0 opacity-75">
+          &copy; 2026 YUMA NAGANO All rights reserved.
+        </p>
+      </div>
     </footer>
 
     <script
@@ -110,5 +224,14 @@
       integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS"
       crossorigin="anonymous"
     ></script>
+    <script>
+      // Tooltipの初期化
+      var tooltipTriggerList = [].slice.call(
+        document.querySelectorAll('[data-bs-toggle="tooltip"]'),
+      );
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+    </script>
   </body>
 </html>

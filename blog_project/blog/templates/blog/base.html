@@ -1,9 +1,12 @@
 {% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ファビコン -->
+    <link rel="icon" href="{% static 'blog/images/favicon/favicon.ico' %}" />
 
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
@@ -11,72 +14,112 @@
       integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
       crossorigin="anonymous"
     />
-
-    <link rel="stylesheet" href="{% static 'brog/css/style.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="{% static 'blog/style.css' %}" />
 
     <title>{% block title %}日々の日記{% endblock %}</title>
   </head>
   <body class="d-flex flex-column min-vh-100">
-    <header>
-      <nav class="navbar navbar-expand-lg bg-light border-bottom shadow-sm">
-        <div class="container-fluid">
-          {% if user.is_authenticated %}
-          <a class="navbar-brand" href="{% url 'brog:home' %}">日々の日記</a>
-          {% else %}
-          <a class="navbar-brand" href="{% url 'brog:index' %}">日々の日記</a>
-          {% endif %}
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link" href="#"></a>
-              </li>
-            </ul>
-            <div class="d-flex align-items-center">
-              {% if user.is_authenticated %}
-              <a class="navbar-text me-2 text-decoration-none" href="{% url 'brog:mypage' %}">
-                {{ user.username }}さん
+    <!-- ナビゲーション -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+      <div class="container">
+        {% if user.is_authenticated %}
+        <a class="navbar-brand" href="{% url 'Blog:home' %}">
+          <i class="bi bi-journal-text text-primary"></i> 日々の日記
+        </a>
+        {% else %}
+        <a class="navbar-brand" href="{% url 'Blog:index' %}">
+          <i class="bi bi-journal-text text-primary"></i> 日々の日記
+        </a>
+        {% endif %}
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            {% if user.is_authenticated %}
+            <li class="nav-item me-2">
+              <a
+                class="btn btn-outline-primary btn-sm"
+                href="{% url 'Blog:post_create' %}"
+              >
+                <i class="bi bi-plus-circle"></i> 新規投稿
               </a>
-              <form action="{% url 'logout' %}" method="post">
+            </li>
+            <li class="nav-item me-2">
+              <a
+                class="btn btn-outline-secondary btn-sm"
+                href="{% url 'Blog:mypage' %}"
+              >
+                <i class="bi bi-person-circle"></i> マイページ
+              </a>
+            </li>
+            <li class="nav-item">
+              <form
+                action="{% url 'Blog:logout' %}"
+                method="post"
+                class="d-inline"
+              >
                 {% csrf_token %}
-                <button type="submit" class="btn btn-outline-secondary btn-sm">
-                  ログアウト
+                <button type="submit" class="btn btn-outline-danger btn-sm">
+                  <i class="bi bi-box-arrow-right"></i> ログアウト
                 </button>
               </form>
-              {% else %}
+            </li>
+            {% else %}
+            <li class="nav-item me-2">
               <a
-                href="{% url 'brog:login' %}"
-                class="btn btn-primary btn-sm me-2"
-                >ログイン</a
+                class="btn btn-outline-primary btn-sm"
+                href="{% url 'Blog:login' %}"
               >
-              <a href="{% url 'brog:signup' %}" class="btn btn-secondary btn-sm"
-                >新規登録</a
-              >
-              {% endif %}
-            </div>
-          </div>
+                <i class="bi bi-box-arrow-in-right"></i> ログイン
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-primary btn-sm" href="{% url 'Blog:signup' %}">
+                <i class="bi bi-person-plus"></i> 新規登録
+              </a>
+            </li>
+            {% endif %}
+          </ul>
         </div>
-      </nav>
-    </header>
+      </div>
+    </nav>
 
+    <!-- メインコンテンツ -->
     <div class="container mt-4">
       <main>{% block content %} {% endblock %}</main>
     </div>
 
-    <footer class="text-center py-4 mt-auto bg-light">
-      <p class="mb-0">&copy; YUMA NAGANO All rights reserved.</p>
+    <!-- フッター -->
+    <footer class="footer text-center py-4 mt-auto">
+      <div class="container">
+        <p class="mb-2">
+          <i class="bi bi-heart-fill text-danger"></i>
+          日々の日記で、あなたの物語を紡ごう
+        </p>
+        <p class="mb-0 opacity-75">
+          &copy; 2026 YUMA NAGANO All rights reserved.
+        </p>
+      </div>
     </footer>
 
     <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"
+      integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS"
       crossorigin="anonymous"
     ></script>
   </body>

@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('brog', '0001_initial'),
+        ('Blog', '0001_initial'),
     ]
 
     operations = [
@@ -23,11 +23,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='post',
             name='author',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='brog.user'),
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='Blog.user'),
         ),
         migrations.AlterField(
             model_name='comment',
             name='author',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='brog.user'),
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='Blog.user'),
         ),
     ]
+

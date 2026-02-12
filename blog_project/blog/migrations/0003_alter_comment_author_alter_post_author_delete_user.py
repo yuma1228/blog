@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('brog', '0002_user_post_author_alter_comment_author'),
+        ('Blog', '0002_user_post_author_alter_comment_author'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -27,3 +27,4 @@ class Migration(migrations.Migration):
             name='User',
         ),
     ]
+
